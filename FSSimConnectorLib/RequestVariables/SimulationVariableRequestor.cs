@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using static FSSimConnectorLib.Entities;
 
-namespace FSSimConnectorLib.RequestVariables
+namespace FSSimConnectorLib
 {
     internal class SimulationVariableRequestor : Entities
     {

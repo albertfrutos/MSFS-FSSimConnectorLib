@@ -78,8 +78,12 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Files\variables.json" />
-    <None Include="Configuration\config.json" />
+    <None Include="Files\variables.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="Configuration\config.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -6,34 +6,21 @@ using System.Text;
 using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.IO;
+using FSSimConnectorLib.LibConfiguration;
 
 namespace FSSimConnectorLib
 {
     internal class VariablesUpdater : Entities
     {
         List<Variable> variablesList = new List<Variable>();
-        List<string> URLs = new List<string>
+
+        public void UpdateVariables(VariablesConfig varConf)
         {
-            "https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_AutopilotAssistant_Variables.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_Brake_Landing_Gear_Variables.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_Control_Variables.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_Electrics_Variables.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_Engine_Variables.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_FlightModel_Variables.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_Fuel_Variables.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_Misc_Variables.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_RadioNavigation_Variables.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_System_Variables.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Services_Variables.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Miscellaneous_Variables.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Camera_Variables.htm"
-        };
-        string variablesFile = @"Files\variables.json";
-        public void UpdateVariables()
-        {
+            string variablesFile = varConf.variablesFile;
+
             HtmlWeb web = new HtmlWeb();
 
-            foreach (string url in URLs)
+            foreach (string url in varConf.variablesURLs)
             {
                 HtmlDocument doc = web.Load(url);
                 var group = Path.GetFileNameWithoutExtension(url);
@@ -42,14 +29,14 @@ namespace FSSimConnectorLib
             //File.WriteAllText(@"Files\units.txt", String.Join("\n", variablesList.Select(x => x.unit).Distinct()));
             string json = JsonConvert.SerializeObject(variablesList);
             //return;
-            if (File.Exists(variablesFile))
+            if (File.Exists(@variablesFile))
             {
-                File.Delete(variablesFile);
+                File.Delete(@variablesFile);
             }
-            File.WriteAllText(variablesFile, json);
+            File.WriteAllText(@variablesFile, json);
 
             var uniqueVariablesList = variablesList.Select(x => x.unit).Distinct().ToList();
-            Console.WriteLine(uniqueVariablesList);
+            Console.WriteLine("Variables updated.");
 
         }
 
@@ -64,10 +51,10 @@ namespace FSSimConnectorLib
                     var cells = row.SelectNodes("td").ToList();
                     if (cells.Count == 4)
                     {
-                        variable.unit = cells[2].InnerText.Replace("\n", string.Empty); // GetCorrectedUnit(cells[2].InnerText.Replace("\n", string.Empty).Trim());
+                        variable.unit = GetCorrectedUnit(cells[2].InnerText.Replace("\n", string.Empty).Trim());
                         variable.type = GetType(variable.unit);
                         variable.name = cells[0].InnerText.Replace("\n", string.Empty);
-                        Console.WriteLine(variable.name);
+                        //Console.WriteLine(variable.name);
                         variable.description = cells[1].InnerText.Replace("\n", string.Empty);
                         variable.group = variableGroup;
                         variablesList.Add(variable);

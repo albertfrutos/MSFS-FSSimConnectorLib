@@ -16,14 +16,21 @@ namespace FSSimConnectorLibConsole
 
             FSSimConnector sim = new FSSimConnector();
             FSSimConnectorEngine engine = new FSSimConnectorEngine();
-            //sim.UpdateVariables(false);
+
+            /*
+            sim.Initialize();
+            sim.UpdateVariables(false);
+            sim.UpdateVariables();
+            sim.UpdateEvents();
+            */
+
             
             if (engine.Initialize())
             {
                 
                 engine.connector.VariableHasBeenRecovered += sim_VariableHasBeenRecovered;
                 engine.connector.EventHasBeenSent += sim_EventHasBeenSent;
-                /*
+                
                 engine.AddVariableRequest("AUTOPILOT HEADING LOCK DIR");
                 engine.WaitMillis(4000);
                 engine.AddVariableRequest("AUTOPILOT MASTER");
@@ -32,8 +39,8 @@ namespace FSSimConnectorLibConsole
                 engine.AddSendEvent("HEADING_BUG_SET", 50);
                 engine.AddVariableRequest("AUTOPILOT HEADING LOCK DIR");
                 engine.LaunchActions();
-                */
 
+                /*
                 engine.AddSendEvent("HEADING_BUG_SET", 126);
                 engine.WaitMillis(10000);
                 engine.AddSendEvent("HEADING_BUG_SET", 216);
@@ -46,7 +53,7 @@ namespace FSSimConnectorLibConsole
                 engine.WaitMillis(10000);
                 engine.AddSendEvent("HEADING_BUG_SET", 126);
                 engine.LaunchActions();
-
+                */
 
 
 
@@ -55,19 +62,20 @@ namespace FSSimConnectorLibConsole
 
 
 
-
             /*
-            if (sim.Connect())
+            sim.Initialize();
+
+            if (sim.isConnected())
             {
                 
-                sim.Initialize();
                 sim.VariableHasBeenRecovered += sim_VariableHasBeenRecovered;
                 sim.EventHasBeenSent += sim_EventHasBeenSent;
 
                 sim.RequestVariable("AUTOPILOT HEADING LOCK DIR");
                 sim.RequestVariable("AUTOPILOT MASTER");
                 sim.RequestVariable("ATC ID");
-                sim.RequestVariable(new List<string> { "HSI DISTANCE", "AUTOPILOT ALTITUDE LOCK VAR" });
+                sim.RequestVariable(new List<string> { "HSI DISTANCE" });
+                sim.RequestVariable(new List<string> { "AUTOPILOT ALTITUDE LOCK VAR" });
                 sim.SendEvent("HEADING_BUG_SET", 50, true, "AUTOPILOT HEADING LOCK DIR");
                 sim.RequestVariable("ATC ID");
                 
@@ -77,8 +85,8 @@ namespace FSSimConnectorLibConsole
             {
                 Console.WriteLine("An error ocurred while connecting to the simulator");
             }
-            */
-
+            
+                */
 
             while (true)
             {

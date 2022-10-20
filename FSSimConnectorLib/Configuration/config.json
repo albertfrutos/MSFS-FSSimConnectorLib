@@ -1,5 +1,5 @@
 {
-  "variables": {
+  "variablesConfig": {
     "variablesFile": "Files\\variables.json",
     "variablesURLs": [
       "https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Aircraft_SimVars/Aircraft_AutopilotAssistant_Variables.htm",
@@ -15,13 +15,12 @@
       "https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Services_Variables.htm",
       "https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Miscellaneous_Variables.htm",
       "https://docs.flightsimulator.com/html/Programming_Tools/SimVars/Camera_Variables.htm"
-    ],
-    "requestVariablesTimerIntervalMillis": 1000
+    ]
   },
-  "events": {
+  "eventsConfig": {
     "eventsFile": "Files\\events.json",
     "enumEventsFile": "Files\\enumEvents.txt",
-    "variablesURLs": [
+    "eventsURLs": [
       "https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/Aircraft_Autopilot_Flight_Assist_Events.htm",
       "https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/Aircraft_Electrical_Events.htm",
       "https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/Aircraft_Engine_Events.htm",
@@ -34,5 +33,5 @@
       "https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/View_Camera_Events.htm"
     ]
   }
-  
+
 }

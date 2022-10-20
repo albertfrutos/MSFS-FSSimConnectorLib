@@ -1,5 +1,4 @@
-﻿using FSSimConnectorLib.RequestVariables;
-using FSSimConnectorLib.SetEvents;
+﻿using FSSimConnectorLib.SetEvents;
 using Microsoft.FlightSimulator.SimConnect;
 using System;
 using System.Collections;
@@ -10,6 +9,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using static FSSimConnectorLib.Entities;
+using FSSimConnectorLib.LibConfiguration;
 
 namespace FSSimConnectorLib
 {
@@ -20,11 +20,13 @@ namespace FSSimConnectorLib
 
         internal VariablesUpdater variablesUpdater = new VariablesUpdater();
 
-        internal EventsUpdater eventsUpdater = null;
+        internal EventsUpdater eventsUpdater = new EventsUpdater();
 
         internal SimulationVariableRequestor variableRequestor = null;
 
         internal SimulationEventSender eventSetter = null;
+
+        internal Configuration configuration = new Configuration();
 
         public event EventHandler<RecoveredVariable> VariableHasBeenRecovered;
         public event EventHandler<SentEvent> EventHasBeenSent;
@@ -34,7 +36,7 @@ namespace FSSimConnectorLib
         internal bool isEventSendingInProgress = true;
 
 
-        public bool Connect()
+        internal bool Connect()
         {
             try
             {
@@ -78,7 +80,7 @@ namespace FSSimConnectorLib
         {
             try
             {
-                variablesUpdater.UpdateVariables();
+                variablesUpdater.UpdateVariables(configuration.variablesConfig);
                 LoadVariables(reloadVariables);
             }
             catch (Exception ex)
@@ -91,7 +93,7 @@ namespace FSSimConnectorLib
         {
             try
             {
-                eventsUpdater.UpdateEvents();
+                eventsUpdater.UpdateEvents(configuration.eventsConfig);
             }
             catch (Exception ex)
             {
@@ -101,11 +103,14 @@ namespace FSSimConnectorLib
 
         public void Initialize(bool updateVariables = false)
         {
+            configuration = new Configuration().LoadConfiguration();
+
+            Connect();
             InitializeRequestor(updateVariables);
             InitializeSetter();
         }
 
-        public void InitializeRequestor(bool updateVariables = false)
+        internal void InitializeRequestor(bool updateVariables = false)
         {
             try
             {
@@ -186,6 +191,11 @@ namespace FSSimConnectorLib
         {
             EventHasBeenSent?.Invoke(this, e);
             lockEngineStep = false;
+        }
+
+        public bool isConnected()
+        {
+            return Connection != null;
         }
 
 

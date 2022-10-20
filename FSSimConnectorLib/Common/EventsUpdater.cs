@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.IO;
 using Microsoft.FlightSimulator.SimConnect;
+using FSSimConnectorLib.LibConfiguration;
 
 namespace FSSimConnectorLib
 {
@@ -28,13 +29,12 @@ namespace FSSimConnectorLib
             "https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/Miscellaneous_Events.htm",
             "https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/View_Camera_Events.htm"
         };
-        string eventsFile = @"Files\events.json";
-        string enumEventsFile = @"Files\enumEvents.txt";
-        internal void UpdateEvents()
+
+        internal void UpdateEvents(EventsConfig eventsConfig)
         {
             HtmlWeb web = new HtmlWeb();
 
-            foreach (string url in URLs)
+            foreach (string url in eventsConfig.eventsURLs)
             {
                 HtmlDocument doc = web.Load(url);
                 var group = Path.GetFileNameWithoutExtension(url);
@@ -42,12 +42,12 @@ namespace FSSimConnectorLib
             }
 
             string json = JsonConvert.SerializeObject(eventsList);
-            if (File.Exists(eventsFile))
+            if (File.Exists(eventsConfig.eventsFile))
             {
-                File.Delete(eventsFile);
+                File.Delete(eventsConfig.eventsFile);
             }
-            File.WriteAllText(eventsFile, json);
-            File.WriteAllText(enumEventsFile, "internal enum EVENTS\n{\n" + string.Join(",\n", enumEventsList) +"\n}");
+            File.WriteAllText(eventsConfig.eventsFile, json);
+            File.WriteAllText(eventsConfig.enumEventsFile, "internal enum EVENTS\n{\n" + string.Join(",\n", enumEventsList) +"\n}");
 
             Console.WriteLine("Events updated. Updating app code and recompiling required.");
         }
@@ -64,10 +64,6 @@ namespace FSSimConnectorLib
                     if (cells.Count >= 3)
                     {
                         currentEvent.name = cells[0].InnerText;
-                        if (currentEvent.name.Contains(" or "))
-                        {
-                            Console.WriteLine("a");
-                        }
 
                         foreach( string multievent in currentEvent.name.Split(new string[] { "or", "\n" }, StringSplitOptions.RemoveEmptyEntries)){
                             if (multievent.Trim() != string.Empty)
