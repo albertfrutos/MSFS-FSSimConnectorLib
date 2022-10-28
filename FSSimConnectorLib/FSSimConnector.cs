@@ -9,7 +9,9 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using static FSSimConnectorLib.Entities;
-using FSSimConnectorLib.LibConfiguration;
+using FSSimConnectorLib;
+using System.IO;
+using System.Text.RegularExpressions;
 
 namespace FSSimConnectorLib
 {
@@ -19,14 +21,14 @@ namespace FSSimConnectorLib
         
 
         internal VariablesUpdater variablesUpdater = new VariablesUpdater();
-
         internal EventsUpdater eventsUpdater = new EventsUpdater();
 
         internal SimulationVariableRequestor variableRequestor = null;
-
         internal SimulationEventSender eventSetter = null;
 
         internal Configuration configuration = new Configuration();
+
+        public object flightModel { get; set; } = null;
 
         public event EventHandler<RecoveredVariable> VariableHasBeenRecovered;
         public event EventHandler<SentEvent> EventHasBeenSent;
@@ -55,6 +57,7 @@ namespace FSSimConnectorLib
             return lockEngineStep;
         }
 
+
         public void Disconnect()
         {
             variableRequestor.DisposeTimer();
@@ -70,8 +73,19 @@ namespace FSSimConnectorLib
         {
             if (reloadVariables)
             {
-                variableRequestor.LoadVariables();
+                variableRequestor.LoadVariables(configuration.variablesConfig);
             }
+        }
+
+        public async void LoadCurrentPlaneFlightModel()
+        {
+
+            if (Connection != null)
+            {
+                Connection.OnRecvSystemState += new SimConnect.RecvSystemStateEventHandler(GetAirCraftCfgPath);
+                Connection.RequestSystemState(DATA_REQUESTS.REQUEST_1, "AircraftLoaded");
+            }
+
         }
 
         
@@ -101,13 +115,43 @@ namespace FSSimConnectorLib
             }
         }
 
-        public void Initialize(bool updateVariables = false)
+        public async void Initialize(bool updateVariables = false)
         {
             configuration = new Configuration().LoadConfiguration();
 
             Connect();
             InitializeRequestor(updateVariables);
             InitializeSetter();
+
+            
+            LoadCurrentPlaneFlightModel();
+
+        }
+
+        internal bool IsFlightModelNotInitialized()
+        {
+            return this.flightModel == null;
+        }
+
+        private void GetAirCraftCfgPath(SimConnect sender, SIMCONNECT_RECV_SYSTEM_STATE data)
+        {
+            List<string> installedAircrafts = new Helpers().SearchFileInAllDirectories(configuration.paths.baseFSPathOfficial, "aircraft.cfg");
+            installedAircrafts.AddRange(new Helpers().SearchFileInAllDirectories(configuration.paths.baseFSPathCommunity, "aircraft.cfg"));
+
+            var currentAircraftCfgPath = installedAircrafts.Where(z => z.EndsWith(data.szString, StringComparison.CurrentCultureIgnoreCase)).FirstOrDefault().ToString();
+
+            if (currentAircraftCfgPath != "")
+            {
+                string flightModelPath = Path.Combine(Path.GetDirectoryName(currentAircraftCfgPath), "flight_model.cfg");
+
+                flightModel = new FlightModel(flightModelPath);
+
+            }
+
+
+
+
+            //C:\Users\Albert\AppData\Roaming\Microsoft Flight Simulator\Packages\Official\Steam\asobo-aircraft-kingair350\SimObjects\Airplanes\Asobo_KingAir350
         }
 
         internal void InitializeRequestor(bool updateVariables = false)
@@ -119,7 +163,7 @@ namespace FSSimConnectorLib
                     UpdateVariables(false);
                 }
                 variableRequestor = new SimulationVariableRequestor(Connection, this);
-                variableRequestor.Initialize();
+                variableRequestor.Initialize(configuration.variablesConfig);
             }
             catch (Exception ex)
             {
@@ -210,8 +254,6 @@ namespace FSSimConnectorLib
                     Task.Delay(timeout)))
                 throw new TimeoutException();
         }
-
-
 
     }
 }

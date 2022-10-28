@@ -24,13 +24,19 @@ namespace FSSimConnectorLib
             return isConnected;
         }
 
-        public void AddSendEvent(string eventName, uint eventValue)
+        public void AddSendEvent(string eventName, uint eventValue, bool useLastVariableRequestValue = false)
         {
-            actionExecuter.AddSendEvent(eventName, eventValue);
+            actionExecuter.AddSendEvent(eventName, eventValue, useLastVariableRequestValue);
         }
         public void AddVariableRequest(string variableName)
         {
             actionExecuter.AddVariableRequest(variableName);
+        }
+        public async Task AddAutomation(object automation)
+        {
+            connector.lockEngineStep = true;
+            await actionExecuter.AddAutomation(this, automation);
+            connector.lockEngineStep = false;
         }
 
         public void AddVariableRequest(List<string> variableNamesList)
@@ -47,10 +53,11 @@ namespace FSSimConnectorLib
             actionExecuter.ClearActions();
         }
 
-        public void LaunchActions()
+        public async void LaunchActions()
         {
             if (isConnected)
             {
+                await new Helpers().WaitWhile(connector.IsEngineLocked);
                 actionExecuter.LaunchActions(connector);
             }
             else
@@ -69,8 +76,14 @@ namespace FSSimConnectorLib
         {
             actionExecuter.AddWaitSeconds(seconds);
         }
+        
+        public void WaitUntilVariableIsHigher(string variable, int thresholdValue)
+        {
+            actionExecuter.WaitUntilVariableIsHigher(variable, thresholdValue);
+        }
 
-
+        
+        
 
     }
 }

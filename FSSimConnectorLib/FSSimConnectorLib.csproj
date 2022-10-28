@@ -51,23 +51,30 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FSSimConnectorEngine\WaitEngine.cs" />
-    <Compile Include="FSSimConnectorEngine\VariableEngine.cs" />
-    <Compile Include="FSSimConnectorEngine\EventEngine.cs" />
-    <Compile Include="FSSimConnectorEngine.cs" />
-    <Compile Include="FSSimConnectorEngine\Action.cs" />
-    <Compile Include="Common\EventsUpdater.cs" />
-    <Compile Include="Common\Event.cs" />
+    <Compile Include="Entities\FlightModel.cs" />
+    <Compile Include="Entities\FlightModel\ReferenceSpeeds.cs" />
+    <Compile Include="Utilities\Helpers.cs" />
+    <Compile Include="FSSimConnectorEngine\ConnectionEngineActions\Automation.cs" />
+    <Compile Include="FSSimConnectorEngine\Automations\TakeOff.cs" />
+    <Compile Include="FSSimConnectorEngine\ConnectionEngineActions\WaitVariableEngine.cs" />
+    <Compile Include="FSSimConnectorEngine\ConnectionEngineActions\WaitEngine.cs" />
+    <Compile Include="FSSimConnectorEngine\ConnectionEngineActions\VariableEngine.cs" />
+    <Compile Include="FSSimConnectorEngine\ConnectionEngineActions\EventEngine.cs" />
+    <Compile Include="FSSimConnectorEngine\FSSimConnectorEngine.cs" />
+    <Compile Include="FSSimConnectorEngine\ConnectionEngineActions\Action.cs" />
+    <Compile Include="Entities\EventsUpdater.cs" />
+    <Compile Include="Entities\Event.cs" />
     <Compile Include="Configuration\Configuration.cs" />
     <Compile Include="RequestVariables\RecoveredVariable.cs" />
     <Compile Include="SendEvents\SentEvent.cs" />
     <Compile Include="SendEvents\SimulationEventSender.cs" />
     <Compile Include="RequestVariables\SimulationVariableRequestor.cs" />
-    <Compile Include="Common\Variable.cs" />
-    <Compile Include="Common\Entities.cs" />
+    <Compile Include="Entities\Variable.cs" />
+    <Compile Include="Entities\Entities.cs" />
     <Compile Include="FSSimConnector.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Common\VariablesUpdater.cs" />
+    <Compile Include="Entities\VariablesUpdater.cs" />
+    <Compile Include="Utilities\IniFile.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Microsoft.FlightSimulator.SimConnect.dll">
@@ -86,5 +93,6 @@
     </None>
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

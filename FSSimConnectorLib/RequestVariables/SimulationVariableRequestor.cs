@@ -34,9 +34,9 @@ namespace FSSimConnectorLib
             connector = fSSimConnector;
         }
 
-        internal SimConnect Initialize()
+        internal SimConnect Initialize(VariablesConfig variablesConfig)
         {
-            VariablesList = new Variable().LoadVariables();
+            VariablesList = new Variable().LoadVariables(variablesConfig.variablesFile);
             Connection.OnRecvOpen += new SimConnect.RecvOpenEventHandler(Simconnect_OnRecvOpen);
             Connection.OnRecvQuit += new SimConnect.RecvQuitEventHandler(Simconnect_OnRecvQuit);
             Connection.OnRecvException += new SimConnect.RecvExceptionEventHandler(Simconnect_OnRecvException);
@@ -53,9 +53,9 @@ namespace FSSimConnectorLib
             requestSimulatorDataTimer.Dispose();
         }
 
-        internal void LoadVariables()
+        internal void LoadVariables(VariablesConfig variablesConfig)
         {
-            VariablesList = new Variable().LoadVariables();
+            VariablesList = new Variable().LoadVariables(variablesConfig.variablesFile);
         }
 
         internal void RequestVariable(string variableName)

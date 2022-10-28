@@ -32,6 +32,9 @@
       "https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/Miscellaneous_Events.htm",
       "https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/View_Camera_Events.htm"
     ]
+  },
+  "paths": {
+    "baseFSPathOfficial": "C:\\Users\\Albert\\AppData\\Roaming\\Microsoft Flight Simulator\\Packages\\Official",
+    "baseFSPathCommunity": "C:\\Users\\Albert\\AppData\\Roaming\\Microsoft Flight Simulator\\Packages\\Community"
   }
-
-}
+} 

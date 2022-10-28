@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using Newtonsoft.Json;
 using System.IO;
 using Microsoft.FlightSimulator.SimConnect;
-using FSSimConnectorLib.LibConfiguration;
+using FSSimConnectorLib;
 
 namespace FSSimConnectorLib
 {

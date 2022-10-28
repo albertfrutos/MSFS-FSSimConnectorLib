@@ -10,13 +10,14 @@ namespace FSSimConnectorLibConsole
 {
     internal class Program
     {
+        static string varValue = "0";
         static void Main(string[] args)
         {
 
 
             FSSimConnector sim = new FSSimConnector();
             FSSimConnectorEngine engine = new FSSimConnectorEngine();
-
+            //sim.Initialize();
             /*
             sim.Initialize();
             sim.UpdateVariables(false);
@@ -25,12 +26,28 @@ namespace FSSimConnectorLibConsole
             */
 
             
+
             if (engine.Initialize())
             {
+
                 
                 engine.connector.VariableHasBeenRecovered += sim_VariableHasBeenRecovered;
                 engine.connector.EventHasBeenSent += sim_EventHasBeenSent;
-                
+
+                engine.AddAutomation(new TakeOff()
+                {
+                    gearUpAltitude = 350,
+                    targetAltitude = 500,
+                    climbRate = 500
+                });
+
+                //engine.AddVariableRequest("AUTOPILOT HEADING LOCK DIR");
+
+
+                engine.LaunchActions();
+
+
+                /*
                 engine.AddVariableRequest("AUTOPILOT HEADING LOCK DIR");
                 engine.WaitMillis(4000);
                 engine.AddVariableRequest("AUTOPILOT MASTER");
@@ -39,6 +56,8 @@ namespace FSSimConnectorLibConsole
                 engine.AddSendEvent("HEADING_BUG_SET", 50);
                 engine.AddVariableRequest("AUTOPILOT HEADING LOCK DIR");
                 engine.LaunchActions();
+                */
+
 
                 /*
                 engine.AddSendEvent("HEADING_BUG_SET", 126);
@@ -102,6 +121,7 @@ namespace FSSimConnectorLibConsole
         public static void sim_VariableHasBeenRecovered(object sender, RecoveredVariable e)
         {
             Console.WriteLine("Recovered variable is:\t {0} \t\t\t with value:{1}", e.Variable.name, e.Value);
+            varValue = e.Value;
         }
 
 
