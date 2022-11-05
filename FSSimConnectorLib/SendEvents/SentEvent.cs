@@ -18,7 +18,5 @@ namespace FSSimConnectorLib
             Id = id;
             Value = value;
         }
-
-
     }
 }

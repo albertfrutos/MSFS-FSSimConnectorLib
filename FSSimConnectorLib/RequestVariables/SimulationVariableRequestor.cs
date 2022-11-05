@@ -43,8 +43,6 @@ namespace FSSimConnectorLib
            
             requestSimulatorDataTimer = new Timer(TimerCallback, null, 0, 20);
 
-
-
             return Connection;
         }
 
@@ -71,7 +69,6 @@ namespace FSSimConnectorLib
             {
                 Entities entities = new Entities();
 
-
                 var dataType = entities.VariableTypes[variable.type];
                 var defineID = entities.DefineIDs[variable.type];
                 var unit = variable.unit;
@@ -93,7 +90,6 @@ namespace FSSimConnectorLib
                     Connection.RegisterDataDefineStruct<BoolType>(DEFINITIONS.BoolType);
                 }
                 
-
                 Connection.OnRecvSimobjectDataBytype += new SimConnect.RecvSimobjectDataBytypeEventHandler(Simconnect_OnRecvSimobjectDataBytype);
 
                 Connection.RequestDataOnSimObjectType(DATA_REQUESTS.REQUEST_1, defineID, 0, SIMCONNECT_SIMOBJECT_TYPE.USER);
@@ -107,12 +103,10 @@ namespace FSSimConnectorLib
                 Console.WriteLine("Variable name {0} provided is null or it's type is not supported", variableName);
                 Console.WriteLine("Only variables which are numbers, strings or booleans are supported");
             }
-
         }
 
         internal void TimerCallback(Object o)
         {
-            
             try
             {
                 if (Connection != null)

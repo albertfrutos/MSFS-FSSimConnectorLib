@@ -29,6 +29,5 @@ namespace FSSimConnectorLib
         {
             return Directory.GetFiles(parentDirectory, filename, SearchOption.AllDirectories).ToList();
         }
-
     }
 }

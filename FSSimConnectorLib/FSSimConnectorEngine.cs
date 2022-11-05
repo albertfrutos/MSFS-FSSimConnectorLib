@@ -24,8 +24,6 @@ namespace FSSimConnectorLib
             return isConnected;
         }
 
-        
-
         public void AddSendEvent(string eventName, uint eventValue, bool useLastVariableRequestValue = false)
         {
             actionExecuter.AddSendEvent(eventName, eventValue, useLastVariableRequestValue);
@@ -49,7 +47,6 @@ namespace FSSimConnectorLib
             }
         }
 
-
         public void ClearActions()
         {
             actionExecuter.ClearActions();
@@ -68,7 +65,6 @@ namespace FSSimConnectorLib
             }
             
         }
-
         public void WaitMillis(int millis)
         {
             actionExecuter.AddWaitMillis(millis);
@@ -93,10 +89,6 @@ namespace FSSimConnectorLib
         {
             ExpectVariableToBe(variable, value.ToString(), breakExecutionIfNotAsExpected);
         }
-
-
-
-
     }
 }
 

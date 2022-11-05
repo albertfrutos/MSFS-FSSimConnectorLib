@@ -57,7 +57,6 @@ namespace FSSimConnectorLib
             return lockEngineStep;
         }
 
-
         public void Disconnect()
         {
             variableRequestor.DisposeTimer();
@@ -87,8 +86,6 @@ namespace FSSimConnectorLib
             }
 
         }
-
-        
 
         public void UpdateVariables(bool reloadVariables = true)
         {
@@ -122,10 +119,8 @@ namespace FSSimConnectorLib
             Connect();
             InitializeRequestor(updateVariables);
             InitializeSetter();
-
             
             LoadCurrentPlaneFlightModel();
-
         }
 
         internal bool IsFlightModelNotInitialized()
@@ -147,11 +142,6 @@ namespace FSSimConnectorLib
                 flightModel = new FlightModel(flightModelPath);
 
             }
-
-
-
-
-            //C:\Users\Albert\AppData\Roaming\Microsoft Flight Simulator\Packages\Official\Steam\asobo-aircraft-kingair350\SimObjects\Airplanes\Asobo_KingAir350
         }
 
         internal void InitializeRequestor(bool updateVariables = false)
@@ -242,7 +232,6 @@ namespace FSSimConnectorLib
             return Connection != null;
         }
 
-
         public static async Task WaitUntil(Func<bool> condition, int frequency = 500, int timeout = -1)
         {
             var waitTask = Task.Run(async () =>
@@ -254,6 +243,5 @@ namespace FSSimConnectorLib
                     Task.Delay(timeout)))
                 throw new TimeoutException();
         }
-
     }
 }

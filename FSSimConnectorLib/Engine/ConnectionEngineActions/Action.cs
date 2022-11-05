@@ -82,8 +82,6 @@ namespace FSSimConnectorLib
                         Console.WriteLine("The rest of actions will not be executed.");
                         break;
                     }
-
-
                 }
             }
         }

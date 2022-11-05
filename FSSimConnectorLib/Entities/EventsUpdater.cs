@@ -16,20 +16,6 @@ namespace FSSimConnectorLib
         List<Event> eventsList = new List<Event>();
         List<string> enumEventsList = new List<string>();
 
-        List<string> URLs = new List<string>
-        {
-            "https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/Aircraft_Autopilot_Flight_Assist_Events.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/Aircraft_Electrical_Events.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/Aircraft_Engine_Events.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/Aircraft_Flight_Control_Events.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/Aircraft_Fuel_System_Events.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/Aircraft_Instrumentation_Events.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/Aircraft_Misc_Events.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/Aircraft_Radio_Navigation_Events.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/Miscellaneous_Events.htm",
-            "https://docs.flightsimulator.com/html/Programming_Tools/Event_IDs/View_Camera_Events.htm"
-        };
-
         internal void UpdateEvents(EventsConfig eventsConfig)
         {
             HtmlWeb web = new HtmlWeb();

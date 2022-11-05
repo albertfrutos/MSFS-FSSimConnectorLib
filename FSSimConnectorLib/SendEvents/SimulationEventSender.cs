@@ -16,13 +16,11 @@ namespace FSSimConnectorLib.SetEvents
 
         List<string> mappedEvents = new List<string>();
 
-
         internal SimulationEventSender (SimConnect AppConnection, FSSimConnector fSSimConnector)
         {
             Connection = AppConnection;
             connector = fSSimConnector;
         }
-
 
         internal  void SendEvent(string eventName, uint eventValue)
         { 
@@ -42,8 +40,6 @@ namespace FSSimConnectorLib.SetEvents
                 Console.WriteLine("Received event ...{0} is not defined. Will not be processed nor sent to the simulator.",eventName);
             }
         }
-
-
 
         internal bool CheckIfEventExists(string eventName)
         {
@@ -66,7 +62,5 @@ namespace FSSimConnectorLib.SetEvents
                     Task.Delay(timeout)))
                 throw new TimeoutException();
         }
-
-
     }
 }

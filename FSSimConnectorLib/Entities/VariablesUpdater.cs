@@ -26,9 +26,9 @@ namespace FSSimConnectorLib
                 var group = Path.GetFileNameWithoutExtension(url);
                 ParseWeb(doc, group);
             }
-            //File.WriteAllText(@"Files\units.txt", String.Join("\n", variablesList.Select(x => x.unit).Distinct()));
+
             string json = JsonConvert.SerializeObject(variablesList);
-            //return;
+
             if (File.Exists(@variablesFile))
             {
                 File.Delete(@variablesFile);
@@ -37,14 +37,12 @@ namespace FSSimConnectorLib
 
             var uniqueVariablesList = variablesList.Select(x => x.unit).Distinct().ToList();
             Console.WriteLine("Variables updated.");
-
         }
 
         private void ParseWeb(HtmlDocument doc, string variableGroup)
         {
             foreach (HtmlNode table in doc.DocumentNode.SelectNodes("//*/table"))
             {
-
                 foreach (HtmlNode row in table.SelectNodes("tbody/tr").Skip(1))
                 {
                     Variable variable = new Variable();
@@ -59,9 +57,6 @@ namespace FSSimConnectorLib
                         variable.group = variableGroup;
                         variablesList.Add(variable);
                     }
-                    //Console.WriteLine(cells[3].InnerText.Replace("\n", string.Empty));
-                    //Console.WriteLine("");
-
                 }
             }
         }
@@ -107,7 +102,6 @@ namespace FSSimConnectorLib
                 }
 
                 return null;
-                
             }
         }
     }

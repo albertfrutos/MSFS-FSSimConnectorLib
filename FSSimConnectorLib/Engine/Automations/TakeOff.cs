@@ -17,9 +17,9 @@ namespace FSSimConnectorLib
         {
             engine.ExpectVariableToBe("SIM ON GROUND", true, onlyAvailableOnGround);
 
-            var gearUpAltitude = this.gearUpAltitude; // Convert.ToInt32(obj.GetType().GetProperty("gearUpAltitude").GetValue(obj));
-            var targetAltitude = this.targetAltitude; // Convert.ToInt32(obj.GetType().GetProperty("targetAltitude").GetValue(obj));
-            var climbRate = Convert.ToUInt32(this.climbRate); //Convert.ToUInt32(obj.GetType().GetProperty("climbRate").GetValue(obj)) > 0 ? Convert.ToUInt32(obj.GetType().GetProperty("climbRate").GetValue(obj)) : Convert.ToUInt32(flightModel.ReferenceSpeeds.ClimbSpeed);
+            var gearUpAltitude = this.gearUpAltitude;
+            var targetAltitude = this.targetAltitude;
+            var climbRate = Convert.ToUInt32(this.climbRate);
 
             //Get current heading and set it into the AP
             engine.AddVariableRequest("PLANE HEADING DEGREES GYRO");
@@ -33,7 +33,7 @@ namespace FSSimConnectorLib
 
             //set VS on and VS 300ft/min
             engine.AddSendEvent("AP_PANEL_VS_HOLD", 1);
-            engine.AddSendEvent("AP_VS_VAR_SET_ENGLISH", climbRate); //Convert.ToUInt32(obj.GetType().GetProperty("climbRate").GetValue(obj)));
+            engine.AddSendEvent("AP_VS_VAR_SET_ENGLISH", climbRate);
 
             //PARKING BREAKS off
             engine.AddSendEvent("PARKING_BRAKE_SET", 0);
@@ -46,7 +46,7 @@ namespace FSSimConnectorLib
             engine.WaitUntilVariableIsHigher("PLANE ALTITUDE", targetAltitude);
 
             //set VS to 0
-            engine.AddSendEvent("AP_VS_VAR_SET_ENGLISH", climbRate); //Convert.ToUInt32(obj.GetType().GetProperty("climbRate").GetValue(obj)));
+            engine.AddSendEvent("AP_VS_VAR_SET_ENGLISH", climbRate);
 
 
             engine.AddSendEvent("AP_ALT_VAR_SET_ENGLISH", Convert.ToUInt32(targetAltitude));
