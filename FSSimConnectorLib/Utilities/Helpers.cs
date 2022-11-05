@@ -16,7 +16,6 @@ namespace FSSimConnectorLib
             {
                 while (condition())
                 {
-                    Console.WriteLine("awaiting");
                     await Task.Delay(frequency);
                 }
             });

@@ -13,10 +13,11 @@ namespace FSSimConnectorLib
         public VariableEngine Variable { get; set; }
         public WaitEngine WaitMs { get; set; }
         public WaitVariableEngine WaitVariable { get; set; }
+        public ExpectVariableToHaveValueEngine ExpectVariableToHaveValue { get; set; }
 
         internal List<Action> actions = new List<Action>();
 
-        internal uint lastVariableRequestValue = 0;
+        internal string lastVariableRequestValue = "";
         
 
         internal void AddSendEvent(string eventName, uint eventValue, bool useLastVariableRequestValue = false)
@@ -54,12 +55,7 @@ namespace FSSimConnectorLib
 
                 if (action.Event != null)
                 {
-                    uint value = action.Event.UseLastVariableValue ? lastVariableRequestValue : action.Event.Value;
-
-                    if (action.Event.Name == "AP_VS_VAR_SET_ENGLISH" && value == 0)
-                    {
-                        Console.WriteLine("here 2");
-                    }
+                    uint value = action.Event.UseLastVariableValue ? Convert.ToUInt32(lastVariableRequestValue) : action.Event.Value;
 
                     connector.SendEvent(action.Event.Name, value);
                 }
@@ -77,6 +73,18 @@ namespace FSSimConnectorLib
                     await action.WaitVariable.WaitVariable(action.WaitVariable, connector);
                     connector.lockEngineStep = false;
                 }
+                else if (action.ExpectVariableToHaveValue != null)
+                {
+                    bool isExpectedValueOK = await action.ExpectVariableToHaveValue.ExpectVariableToHaveValue(action.ExpectVariableToHaveValue, connector);
+                    connector.lockEngineStep = false;
+                    if(!isExpectedValueOK && action.ExpectVariableToHaveValue.stopActionsIfUnexpectedValue)
+                    {
+                        Console.WriteLine("The rest of actions will not be executed.");
+                        break;
+                    }
+
+
+                }
             }
         }
 
@@ -86,9 +94,22 @@ namespace FSSimConnectorLib
             Console.WriteLine("automation added");
         }
 
+        internal void ExpectVariableToBe(string variable, string value, bool breakExecutionIfNotAsExpected)
+        {
+            actions.Add(new Action()
+            {
+                ExpectVariableToHaveValue = new ExpectVariableToHaveValueEngine()
+                {
+                    variableName = variable,
+                    expectedValue = value,
+                    stopActionsIfUnexpectedValue = breakExecutionIfNotAsExpected
+                }
+            });
+        }
+
         private void ReturnVariableValue(object sender, RecoveredVariable e)
         {
-            lastVariableRequestValue = Convert.ToUInt32(e.Value);
+            lastVariableRequestValue = e.Value;
         }
 
         internal void AddWaitSeconds(int seconds)

@@ -24,6 +24,8 @@ namespace FSSimConnectorLib
             return isConnected;
         }
 
+        
+
         public void AddSendEvent(string eventName, uint eventValue, bool useLastVariableRequestValue = false)
         {
             actionExecuter.AddSendEvent(eventName, eventValue, useLastVariableRequestValue);
@@ -82,8 +84,18 @@ namespace FSSimConnectorLib
             actionExecuter.WaitUntilVariableIsHigher(variable, thresholdValue);
         }
 
-        
-        
+        public void ExpectVariableToBe(string variable, string value, bool breakExecutionIfNotAsExpected = false)
+        {
+            actionExecuter.ExpectVariableToBe(variable, value, breakExecutionIfNotAsExpected);
+        }
+
+        public void ExpectVariableToBe(string variable, bool value, bool breakExecutionIfNotAsExpected = false)
+        {
+            ExpectVariableToBe(variable, value.ToString(), breakExecutionIfNotAsExpected);
+        }
+
+
+
 
     }
 }

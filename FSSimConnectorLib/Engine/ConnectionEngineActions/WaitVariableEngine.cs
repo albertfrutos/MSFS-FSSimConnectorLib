@@ -23,7 +23,7 @@ namespace FSSimConnectorLib
         internal async Task WaitVariable(WaitVariableEngine waitVariable, FSSimConnector connector)
         {
             this.connector = connector;
-            Console.WriteLine("waiting {0} {1} {2}",variableName,comparison, thresholdValue.ToString());
+            Console.WriteLine("Waiting until {0} {1} {2}",variableName,comparison, thresholdValue.ToString());
             
             this.connector.VariableHasBeenRecovered += sim_VariableRecovered;
             this.connector.RequestVariable(variableName);

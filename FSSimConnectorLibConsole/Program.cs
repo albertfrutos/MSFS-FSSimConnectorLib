@@ -36,9 +36,10 @@ namespace FSSimConnectorLibConsole
 
                 engine.AddAutomation(new TakeOff()
                 {
-                    gearUpAltitude = 350,
+                    gearUpAltitude = 60,
                     targetAltitude = 500,
-                    climbRate = 500
+                    climbRate = 1200,
+                    onlyAvailableOnGround = true
                 });
 
                 //engine.AddVariableRequest("AUTOPILOT HEADING LOCK DIR");
@@ -120,7 +121,7 @@ namespace FSSimConnectorLibConsole
 
         public static void sim_VariableHasBeenRecovered(object sender, RecoveredVariable e)
         {
-            Console.WriteLine("Recovered variable is:\t {0} \t\t\t with value:{1}", e.Variable.name, e.Value);
+            //Console.WriteLine("Recovered variable is:\t {0} \t\t\t with value:{1}", e.Variable.name, e.Value);
             varValue = e.Value;
         }
 

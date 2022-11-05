@@ -51,17 +51,17 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Engine\ConnectionEngineActions\ExpectVariableToHaveValue.cs" />
     <Compile Include="Entities\FlightModel.cs" />
     <Compile Include="Entities\FlightModel\ReferenceSpeeds.cs" />
     <Compile Include="Utilities\Helpers.cs" />
-    <Compile Include="Engine\ConnectionEngineActions\Automation.cs" />
-    <Compile Include="Engine\Automations\TakeOff.cs" />
-    <Compile Include="Engine\ConnectionEngineActions\WaitVariableEngine.cs" />
-    <Compile Include="Engine\ConnectionEngineActions\WaitEngine.cs" />
-    <Compile Include="Engine\ConnectionEngineActions\VariableEngine.cs" />
-    <Compile Include="Engine\ConnectionEngineActions\EventEngine.cs" />
-    <Compile Include="Engine\ConnectionEngineActions\Action.cs" />
+    <Compile Include="FSSimConnectorEngine\ConnectionEngineActions\Automation.cs" />
+    <Compile Include="FSSimConnectorEngine\Automations\TakeOff.cs" />
+    <Compile Include="FSSimConnectorEngine\ConnectionEngineActions\WaitVariableEngine.cs" />
+    <Compile Include="FSSimConnectorEngine\ConnectionEngineActions\WaitEngine.cs" />
+    <Compile Include="FSSimConnectorEngine\ConnectionEngineActions\VariableEngine.cs" />
+    <Compile Include="FSSimConnectorEngine\ConnectionEngineActions\EventEngine.cs" />
+    <Compile Include="FSSimConnectorEngine\FSSimConnectorEngine.cs" />
+    <Compile Include="FSSimConnectorEngine\ConnectionEngineActions\Action.cs" />
     <Compile Include="Entities\EventsUpdater.cs" />
     <Compile Include="Entities\Event.cs" />
     <Compile Include="Configuration\Configuration.cs" />
@@ -72,7 +72,6 @@
     <Compile Include="Entities\Variable.cs" />
     <Compile Include="Entities\Entities.cs" />
     <Compile Include="FSSimConnector.cs" />
-    <Compile Include="FSSimConnectorEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Entities\VariablesUpdater.cs" />
     <Compile Include="Utilities\IniFile.cs" />

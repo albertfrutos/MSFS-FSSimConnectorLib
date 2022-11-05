@@ -101,7 +101,6 @@ namespace FSSimConnectorLib
                 processingVariablesQueue.Enqueue(variable);
                 Connection.ClearDataDefinition(defineID);
                 Connection.ReceiveMessage();
-                    Console.WriteLine("   requested {0}", variable.name);
             }
             else
             {
@@ -129,6 +128,8 @@ namespace FSSimConnectorLib
             catch (Exception e)
             {
                 Console.WriteLine(e.Message);
+                return;
+                
             }
         }
 
@@ -152,38 +153,42 @@ namespace FSSimConnectorLib
 
         private void Simconnect_OnRecvSimobjectDataBytype(SimConnect sender, SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE data)
         {
-            
-
-
-            if (processingVariablesQueue.Count == 0)
+            try
             {
-                return;
+                if (processingVariablesQueue.Count == 0)
+                {
+                    return;
+                }
+
+                Variable variable = (Variable)processingVariablesQueue.Dequeue();
+                string parameterValue = null;
+
+                if (variable.type == "string")
+                {
+                    StringType result = (StringType)data.dwData[0];
+                    parameterValue = result.stringVar;
+                }
+                else if (variable.type == "int32")
+                {
+                    NumType result = (NumType)data.dwData[0];
+                    parameterValue = result.numVar.ToString();
+                }
+                else if (variable.type == "bool")
+                {
+                    BoolType result = (BoolType)data.dwData[0];
+                    parameterValue = result.boolVar.ToString();
+                }
+
+                var recoveredVariable = new RecoveredVariable(variable, parameterValue);
+                connector.OnVariableRecovery(recoveredVariable);
+
+                isProcessing = false;
+                Console.WriteLine("    finished {0}", variable.name);
             }
-
-            Variable variable = (Variable)processingVariablesQueue.Dequeue();
-            string parameterValue = null;
-
-            if (variable.type == "string")
+            catch (Exception ex)
             {
-                StringType result = (StringType)data.dwData[0];
-                parameterValue = result.stringVar;
+                Console.WriteLine("Error while receiving variable: {1}", ex.Message);
             }
-            else if (variable.type == "int32")
-            {
-                NumType result = (NumType)data.dwData[0];
-                parameterValue = result.numVar.ToString();
-            }
-            else if (variable.type == "bool")
-            {
-                BoolType result = (BoolType)data.dwData[0];
-                parameterValue = result.boolVar.ToString();
-            }
-
-            var recoveredVariable = new RecoveredVariable(variable, parameterValue);
-            connector.OnVariableRecovery(recoveredVariable);
-
-            isProcessing = false;
-            Console.WriteLine("    finished {0}", variable.name);
         }
 
         private static FieldInfo[] GetFieldInfo(SIMCONNECT_RECV_SIMOBJECT_DATA_BYTYPE data, ref object currentData)
