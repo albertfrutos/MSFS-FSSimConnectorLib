@@ -22,7 +22,7 @@ namespace FSSimConnectorLib.SetEvents
             connector = fSSimConnector;
         }
 
-        internal  void SendEvent(string eventName, uint eventValue)
+        internal async Task SendEvent(string eventName, uint eventValue)
         { 
             if (CheckIfEventExists(eventName))
             {

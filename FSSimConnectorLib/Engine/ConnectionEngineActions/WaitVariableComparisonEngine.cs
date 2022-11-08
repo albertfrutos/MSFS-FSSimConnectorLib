@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace FSSimConnectorLib
 {
-    internal class WaitVariableEngine
+    internal class WaitVariableComparisonEngine
     {
         internal string variableName { get; set; }
         internal int thresholdValue { get; set; }
@@ -20,7 +20,7 @@ namespace FSSimConnectorLib
 
 
 
-        internal async Task WaitVariable(WaitVariableEngine waitVariable, FSSimConnector connector)
+        internal async Task WaitVariableComparison(WaitVariableComparisonEngine waitVariable, FSSimConnector connector)
         {
             this.connector = connector;
             Console.WriteLine("Waiting until {0} {1} {2}",variableName,comparison, thresholdValue.ToString());
@@ -39,7 +39,6 @@ namespace FSSimConnectorLib
 
         private void sim_VariableRecovered(object sender, RecoveredVariable e)
         {
-            Console.WriteLine("here");
             currentValue = Convert.ToInt32(e.Value);
 
             bool result = false;

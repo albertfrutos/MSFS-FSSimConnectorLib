@@ -11,7 +11,7 @@ namespace FSSimConnectorLib
     {
         internal int WaitMs { get; set; }
 
-        internal void WaitMilliseconds(int millis)
+        internal async Task WaitMilliseconds(int millis)
         {
             Console.WriteLine("start wait");
             Thread.Sleep(millis);
