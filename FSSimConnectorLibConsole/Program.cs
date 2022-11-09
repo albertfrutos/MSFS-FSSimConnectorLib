@@ -35,6 +35,10 @@ namespace FSSimConnectorLibConsole
                 engine.connector.VariableHasBeenRecovered += sim_VariableHasBeenRecovered;
                 engine.connector.EventHasBeenSent += sim_EventHasBeenSent;
 
+
+                var quickActions = engine.quickActions;
+                await quickActions.EnableAP();
+
                 /*
                 var quickActions = engine.quickActions;
                 quickActions.SetHeading(300);
@@ -47,15 +51,15 @@ namespace FSSimConnectorLibConsole
                 Console.WriteLine("finished 1");
                 */
 
-
+                /*
                 await engine.AddAutomation(new TakeOff()
                 {
-                    gearUpAltitudeFromGround = 600,
-                    targetAltitude = 621,
+                    gearUpAltitudeFromGround = 200,
+                    targetAltitude = 300,
                     climbRate = 1200,
                     onlyAvailableOnGround = true
                 });
-                
+                */
 
                 await engine.LaunchActions();
 

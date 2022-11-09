@@ -27,15 +27,11 @@ namespace FSSimConnectorLib
 
             #region automation
 
-            engine.ExpectVariableToBe("SIM ON GROUND", true, onlyAvailableOnGround);
+            await engine.ExpectVariableToBe("SIM ON GROUND", true, onlyAvailableOnGround);
 
             var gearUpAltitude = this.gearUpAltitudeFromGround + currentPlaneAltitude;
             var targetAltitude = this.targetAltitude;
             var climbRate = Convert.ToUInt32(this.climbRate);
-
-            //Get current heading and set it into the AP
-            await engine.AddVariableRequest("PLANE HEADING DEGREES GYRO");
-            await engine.AddSendEvent("HEADING_BUG_SET", 0, true);
 
             //AP on
             await engine.AddSendEvent("AP_MASTER", 1);
@@ -43,8 +39,11 @@ namespace FSSimConnectorLib
             //FD on
             await engine.AddSendEvent("TOGGLE_FLIGHT_DIRECTOR", 1);
 
-            //set VS on and VS
-            await engine.AddSendEvent("AP_PANEL_VS_HOLD", 1);
+            //Get current heading and set it into the AP
+            await engine.AddVariableRequest("PLANE HEADING DEGREES GYRO");
+            await engine.AddSendEvent("HEADING_BUG_SET", 0, true);
+
+            //set VS to climbRate ft/min
             await engine.AddSendEvent("AP_VS_VAR_SET_ENGLISH", climbRate);
 
             //PARKING BREAKS off
@@ -52,6 +51,11 @@ namespace FSSimConnectorLib
 
             //full engine
             await engine.AddSendEvent("THROTTLE_FULL", 0);
+
+            //When speed > TakoffSpeed --> enable VS (this causes take off)
+            await engine.WaitUntilVariableIsHigher("GROUND VELOCITY", Convert.ToInt32(flightModel.ReferenceSpeeds.TakeoffSpeed));
+            await engine.AddSendEvent("AP_PANEL_VS_HOLD", 1);
+
 
             await engine.WaitUntilVariableIsHigher("PLANE ALTITUDE", gearUpAltitude);
             await engine.AddSendEvent("GEAR_UP", 0);
