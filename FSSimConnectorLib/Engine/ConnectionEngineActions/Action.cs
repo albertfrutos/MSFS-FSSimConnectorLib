@@ -12,15 +12,20 @@ namespace FSSimConnectorLib
         public EventEngine Event { get; set; }
         public VariableEngine Variable { get; set; }
         public WaitEngine WaitMs { get; set; }
-        public WaitVariableEngine WaitVariable { get; set; }
+        public WaitVariableComparisonEngine WaitVariable { get; set; }
+        public ClearEngine ClearEngine { get; set; }
         public ExpectVariableToHaveValueEngine ExpectVariableToHaveValue { get; set; }
 
         internal List<Action> actions = new List<Action>();
 
         internal string lastVariableRequestValue = "";
+
+        //internal bool 
+
+        
         
 
-        internal void AddSendEvent(string eventName, uint eventValue, bool useLastVariableRequestValue = false)
+        internal async Task AddSendEvent(string eventName, uint eventValue, bool useLastVariableRequestValue = false)
         {
             actions.Add(new Action()
             {
@@ -33,7 +38,7 @@ namespace FSSimConnectorLib
             });
         }
 
-        internal void AddVariableRequest(string variableName)
+        internal async Task AddVariableRequest(string variableName)
         {
             actions.Add(new Action()
             {
@@ -44,12 +49,15 @@ namespace FSSimConnectorLib
             });
         }
 
-        internal async void LaunchActions( FSSimConnector connector)
+        internal async Task LaunchActions( FSSimConnector connector)
         {
+            await new Helpers().WaitWhile(connector.IsEngineLocked);
+
+            //connector.lockEngine = true;
             connector.VariableHasBeenRecovered += ReturnVariableValue;
-            foreach (Action action in actions)
+            foreach (Action action in actions.ToList())
             {
-                await new Helpers().WaitWhile(connector.IsEngineLocked);
+                await new Helpers().WaitWhile(connector.IsEngineStepLocked);
 
                 connector.lockEngineStep = true;
 
@@ -57,20 +65,20 @@ namespace FSSimConnectorLib
                 {
                     uint value = action.Event.UseLastVariableValue ? Convert.ToUInt32(lastVariableRequestValue) : action.Event.Value;
 
-                    connector.SendEvent(action.Event.Name, value);
+                    await connector.SendEvent(action.Event.Name, value);
                 }
                 else if (action.Variable != null)
                 {
-                    connector.RequestVariable(action.Variable.variableName);
+                    await connector.RequestVariable(action.Variable.variableName);
                 }
                 else if (action.WaitMs != null)
                 {
-                    action.WaitMs.WaitMilliseconds(action.WaitMs.WaitMs);
+                    await action.WaitMs.WaitMilliseconds(action.WaitMs.WaitMs);
                     connector.lockEngineStep = false;
                 }
                 else if (action.WaitVariable != null)
                 {
-                    await action.WaitVariable.WaitVariable(action.WaitVariable, connector);
+                    await action.WaitVariable.WaitVariableComparison(action.WaitVariable, connector);
                     connector.lockEngineStep = false;
                 }
                 else if (action.ExpectVariableToHaveValue != null)
@@ -83,7 +91,14 @@ namespace FSSimConnectorLib
                         break;
                     }
                 }
+                else if (action.ClearEngine != null)
+                {
+                    await ClearActions();
+                    connector.lockEngineStep = false;
+                }
             }
+
+            
         }
 
         internal async Task AddAutomation(object engine, object automation)
@@ -92,7 +107,7 @@ namespace FSSimConnectorLib
             Console.WriteLine("automation added");
         }
 
-        internal void ExpectVariableToBe(string variable, string value, bool breakExecutionIfNotAsExpected)
+        internal async Task ExpectVariableToBe(string variable, string value, bool breakExecutionIfNotAsExpected)
         {
             actions.Add(new Action()
             {
@@ -110,21 +125,30 @@ namespace FSSimConnectorLib
             lastVariableRequestValue = e.Value;
         }
 
-        internal void AddWaitSeconds(int seconds)
+        internal async Task AddWaitSeconds(int seconds)
         {
             AddWaitMillis(seconds*1000);
         }
 
-        internal void ClearActions()
+        internal async Task ClearActions()
         {
             actions.Clear();
+            actions = new List<Action>();
         }
-
-        internal void WaitUntilVariableIsHigher(string variable, int thresholdValue)
+        
+        internal async Task AddClearActions()
         {
             actions.Add(new Action()
             {
-                WaitVariable = new WaitVariableEngine()
+                ClearEngine = new ClearEngine()
+            });
+        }
+
+        internal async Task WaitUntilVariableIsHigher(string variable, int thresholdValue)
+        {
+            actions.Add(new Action()
+            {
+                WaitVariable = new WaitVariableComparisonEngine()
                 {
                     variableName = variable,
                     thresholdValue = thresholdValue,
@@ -133,7 +157,7 @@ namespace FSSimConnectorLib
             });
         }
 
-        internal void AddWaitMillis(int millis)
+        internal async Task AddWaitMillis(int millis)
         {
             actions.Add(new Action()
             {

@@ -51,13 +51,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Engine\Automations\IAutomation.cs" />
+    <Compile Include="Engine\ConnectionEngineActions\ClearEngine.cs" />
+    <Compile Include="Engine\ConnectionEngineActions\QuickActions.cs" />
     <Compile Include="Engine\ConnectionEngineActions\ExpectVariableToHaveValue.cs" />
     <Compile Include="Entities\FlightModel.cs" />
     <Compile Include="Entities\FlightModel\ReferenceSpeeds.cs" />
     <Compile Include="Utilities\Helpers.cs" />
     <Compile Include="Engine\ConnectionEngineActions\Automation.cs" />
     <Compile Include="Engine\Automations\TakeOff.cs" />
-    <Compile Include="Engine\ConnectionEngineActions\WaitVariableEngine.cs" />
+    <Compile Include="Engine\ConnectionEngineActions\WaitVariableComparisonEngine.cs" />
     <Compile Include="Engine\ConnectionEngineActions\WaitEngine.cs" />
     <Compile Include="Engine\ConnectionEngineActions\VariableEngine.cs" />
     <Compile Include="Engine\ConnectionEngineActions\EventEngine.cs" />

@@ -33,6 +33,7 @@ namespace FSSimConnectorLib
         public event EventHandler<RecoveredVariable> VariableHasBeenRecovered;
         public event EventHandler<SentEvent> EventHasBeenSent;
 
+        internal bool lockEngine = false;
         internal bool lockEngineStep = false;
         internal bool isVariableRequestInProgress = false;
         internal bool isEventSendingInProgress = true;
@@ -52,9 +53,14 @@ namespace FSSimConnectorLib
             }
         }
 
-        internal bool IsEngineLocked()
+        internal bool IsEngineStepLocked()
         {
             return lockEngineStep;
+        }
+        
+        internal bool IsEngineLocked()
+        {
+            return lockEngine;
         }
 
         public void Disconnect()
@@ -176,11 +182,11 @@ namespace FSSimConnectorLib
             }
         }
 
-        public async void SendEvent(string eventName, uint eventValue, bool updateVariableAfterEvent = false, string variableNameToUpdate = "")
+        public async Task SendEvent(string eventName, uint eventValue, bool updateVariableAfterEvent = false, string variableNameToUpdate = "")
         {
             try
             {
-                eventSetter.SendEvent(eventName, eventValue);
+                await eventSetter.SendEvent(eventName, eventValue);
 
                 if (updateVariableAfterEvent)
                 {
@@ -201,17 +207,23 @@ namespace FSSimConnectorLib
             }
         }
 
-        public void RequestVariable(string variableName)
+        public async Task RequestVariable(string variableName)
         {
             try
             {
                 isVariableRequestInProgress = true;
-                variableRequestor.RequestVariable(variableName);
+                await variableRequestor.RequestVariable(variableName);
+                await new Helpers().WaitWhile(IsRequestInProgress);
             }
             catch (Exception ex)
             {
                 Console.WriteLine("An exception occurred while requesting the variable (" + variableName +  ") to MSFS: " + ex.Message);
             }
+        }
+
+        public bool IsRequestInProgress()
+        {
+            return isVariableRequestInProgress;
         }
 
         public void OnVariableRecovery(RecoveredVariable e)

@@ -6,52 +6,69 @@ using System.Threading.Tasks;
 
 namespace FSSimConnectorLib
 {
-    public class TakeOff
+    public class TakeOff : IAutomation
     {
         public int climbRate { get; set; }
-        public int gearUpAltitude { get; set;}
+        public int gearUpAltitudeFromGround { get; set;}
         public int targetAltitude { get; set; }
         public bool onlyAvailableOnGround { get; set; } = false;
 
-        public void Load(FSSimConnectorEngine engine, FlightModel flightModel, object obj)
+        public async Task LoadAutomation(FSSimConnectorEngine engine, FlightModel flightModel, object obj)
         {
-            engine.ExpectVariableToBe("SIM ON GROUND", true, onlyAvailableOnGround);
+            #region before
 
-            var gearUpAltitude = this.gearUpAltitude;
+            await engine.AddVariableRequest("PLANE ALTITUDE");
+            engine.connector.lockEngine = false;
+            await engine.LaunchActions(true);
+            engine.connector.lockEngine = true;
+            var currentPlaneAltitude = Convert.ToInt32(engine.actionExecuter.lastVariableRequestValue);
+
+            #endregion
+
+            #region automation
+
+            await engine.ExpectVariableToBe("SIM ON GROUND", true, onlyAvailableOnGround);
+
+            var gearUpAltitude = this.gearUpAltitudeFromGround + currentPlaneAltitude;
             var targetAltitude = this.targetAltitude;
             var climbRate = Convert.ToUInt32(this.climbRate);
 
-            //Get current heading and set it into the AP
-            engine.AddVariableRequest("PLANE HEADING DEGREES GYRO");
-            engine.AddSendEvent("HEADING_BUG_SET", 0, true);
-           
             //AP on
-            engine.AddSendEvent("AP_MASTER", 1);
+            await engine.AddSendEvent("AP_MASTER", 1);
 
             //FD on
-            engine.AddSendEvent("TOGGLE_FLIGHT_DIRECTOR", 1);
+            await engine.AddSendEvent("TOGGLE_FLIGHT_DIRECTOR", 1);
 
-            //set VS on and VS 300ft/min
-            engine.AddSendEvent("AP_PANEL_VS_HOLD", 1);
-            engine.AddSendEvent("AP_VS_VAR_SET_ENGLISH", climbRate);
+            //Get current heading and set it into the AP
+            await engine.AddVariableRequest("PLANE HEADING DEGREES GYRO");
+            await engine.AddSendEvent("HEADING_BUG_SET", 0, true);
+
+            //set VS to climbRate ft/min
+            await engine.AddSendEvent("AP_VS_VAR_SET_ENGLISH", climbRate);
 
             //PARKING BREAKS off
-            engine.AddSendEvent("PARKING_BRAKE_SET", 0);
+            await engine.AddSendEvent("PARKING_BRAKE_SET", 0);
 
             //full engine
-            engine.AddSendEvent("THROTTLE_FULL", 0);
+            await engine.AddSendEvent("THROTTLE_FULL", 0);
 
-            engine.WaitUntilVariableIsHigher("PLANE ALTITUDE", gearUpAltitude);
-            engine.AddSendEvent("GEAR_UP", 0);
-            engine.WaitUntilVariableIsHigher("PLANE ALTITUDE", targetAltitude);
+            //When speed > TakoffSpeed --> enable VS (this causes take off)
+            await engine.WaitUntilVariableIsHigher("GROUND VELOCITY", Convert.ToInt32(flightModel.ReferenceSpeeds.TakeoffSpeed));
+            await engine.AddSendEvent("AP_PANEL_VS_HOLD", 1);
+
+
+            await engine.WaitUntilVariableIsHigher("PLANE ALTITUDE", gearUpAltitude);
+            await engine.AddSendEvent("GEAR_UP", 0);
+            await engine.WaitUntilVariableIsHigher("PLANE ALTITUDE", targetAltitude);
 
             //set VS to 0
-            engine.AddSendEvent("AP_VS_VAR_SET_ENGLISH", climbRate);
+            await engine.AddSendEvent("AP_VS_VAR_SET_ENGLISH", climbRate);
 
 
-            engine.AddSendEvent("AP_ALT_VAR_SET_ENGLISH", Convert.ToUInt32(targetAltitude));
-            engine.AddSendEvent("AP_ALT_HOLD", 1);
-            Console.WriteLine(targetAltitude);
+            await engine.AddSendEvent("AP_ALT_VAR_SET_ENGLISH", Convert.ToUInt32(targetAltitude));
+            await engine.AddSendEvent("AP_ALT_HOLD", 1);
+
+            #endregion
         }
     }
 }

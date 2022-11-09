@@ -11,7 +11,8 @@ namespace FSSimConnectorLib
     {
         public FSSimConnector connector = new FSSimConnector();
         internal bool isConnected = false;
-        Action actionExecuter = new Action();
+        internal Action actionExecuter = new Action();
+        public QuickActions quickActions = null;
 
         public bool Initialize()
         {
@@ -19,75 +20,80 @@ namespace FSSimConnectorLib
             {
                 isConnected = true;
                 connector.Initialize();
+                quickActions = new QuickActions(this);
             }
             
             return isConnected;
         }
 
-        public void AddSendEvent(string eventName, uint eventValue, bool useLastVariableRequestValue = false)
+        public async Task AddSendEvent(string eventName, uint eventValue, bool useLastVariableRequestValue = false)
         {
-            actionExecuter.AddSendEvent(eventName, eventValue, useLastVariableRequestValue);
+            await actionExecuter.AddSendEvent(eventName, eventValue, useLastVariableRequestValue);
         }
-        public void AddVariableRequest(string variableName)
+        public async Task AddVariableRequest(string variableName)
         {
-            actionExecuter.AddVariableRequest(variableName);
+            await actionExecuter.AddVariableRequest(variableName);
+        }
+        public async Task AddClearActions()
+        {
+            await actionExecuter.AddClearActions();
         }
         public async Task AddAutomation(object automation)
         {
-            connector.lockEngineStep = true;
+            connector.lockEngine = true;
             await actionExecuter.AddAutomation(this, automation);
-            connector.lockEngineStep = false;
+            connector.lockEngine = false;
         }
 
-        public void AddVariableRequest(List<string> variableNamesList)
+        public async Task AddVariableRequest(List<string> variableNamesList)
         {
             foreach (string variableName in variableNamesList)
             {
-                actionExecuter.AddVariableRequest(variableName);
+                await actionExecuter.AddVariableRequest(variableName);
             }
         }
 
-        public void ClearActions()
-        {
-            actionExecuter.ClearActions();
-        }
-
-        public async void LaunchActions()
+        public async Task<string> LaunchActions(bool deleteAfterExecution = false)
         {
             if (isConnected)
             {
-                await new Helpers().WaitWhile(connector.IsEngineLocked);
-                actionExecuter.LaunchActions(connector);
+                if (deleteAfterExecution)
+                {
+                    await AddClearActions();
+                }
+                await actionExecuter.LaunchActions(connector);
             }
             else
             {
                 Console.WriteLine("No connection to the simulator, so cannot execute the actions");
             }
+
+            return "a";
             
         }
-        public void WaitMillis(int millis)
+        public async Task WaitMillis(int millis)
         {
-            actionExecuter.AddWaitMillis(millis);
+            await actionExecuter.AddWaitMillis(millis);
         }
 
-        public void WaitSeconds(int seconds)
+        public async Task WaitSeconds(int seconds)
         {
-            actionExecuter.AddWaitSeconds(seconds);
+            await actionExecuter.AddWaitSeconds(seconds);
         }
         
-        public void WaitUntilVariableIsHigher(string variable, int thresholdValue)
+        public async Task WaitUntilVariableIsHigher(string variable, int thresholdValue)
         {
-            actionExecuter.WaitUntilVariableIsHigher(variable, thresholdValue);
+            await actionExecuter.WaitUntilVariableIsHigher(variable, thresholdValue);
         }
 
-        public void ExpectVariableToBe(string variable, string value, bool breakExecutionIfNotAsExpected = false)
+        public async Task ExpectVariableToBe(string variable, string value, bool breakExecutionIfNotAsExpected = false)
         {
-            actionExecuter.ExpectVariableToBe(variable, value, breakExecutionIfNotAsExpected);
+            await actionExecuter.ExpectVariableToBe(variable, value, breakExecutionIfNotAsExpected);
         }
 
-        public void ExpectVariableToBe(string variable, bool value, bool breakExecutionIfNotAsExpected = false)
+        public async Task ExpectVariableToBe(string variable, bool value, bool breakExecutionIfNotAsExpected = false)
         {
-            ExpectVariableToBe(variable, value.ToString(), breakExecutionIfNotAsExpected);
+            await ExpectVariableToBe(variable, value.ToString(), breakExecutionIfNotAsExpected);
         }
     }
 }

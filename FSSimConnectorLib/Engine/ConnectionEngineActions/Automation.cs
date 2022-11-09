@@ -16,7 +16,12 @@ namespace FSSimConnectorLib
 
             FlightModel flightModel = (FlightModel)engine.connector.flightModel;
 
-            obj.GetType().GetMethod("Load").Invoke(obj, new object[] { engine, flightModel, obj });   
+            
+
+            Task automationLoadMethod =  (Task)obj.GetType().GetMethod("LoadAutomation").Invoke(obj, new object[] { engine, flightModel, obj });
+
+
+            await automationLoadMethod;
         }
     }
 }

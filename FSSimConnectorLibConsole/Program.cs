@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace FSSimConnectorLibConsole
@@ -11,7 +12,7 @@ namespace FSSimConnectorLibConsole
     internal class Program
     {
         static string varValue = "0";
-        static void Main(string[] args)
+        static async Task Main(string[] args)
         {
 
 
@@ -34,18 +35,33 @@ namespace FSSimConnectorLibConsole
                 engine.connector.VariableHasBeenRecovered += sim_VariableHasBeenRecovered;
                 engine.connector.EventHasBeenSent += sim_EventHasBeenSent;
 
-                engine.AddAutomation(new TakeOff()
+
+                var quickActions = engine.quickActions;
+                await quickActions.EnableAP();
+
+                /*
+                var quickActions = engine.quickActions;
+                quickActions.SetHeading(300);
+
+                engine.AddVariableRequest("AUTOPILOT HEADING LOCK DIR");
+                engine.AddVariableRequest("AUTOPILOT HEADING LOCK DIR");
+                engine.AddVariableRequest("AUTOPILOT HEADING LOCK DIR");
+                engine.AddVariableRequest("AUTOPILOT HEADING LOCK DIR");
+                await engine.LaunchActions(true);
+                Console.WriteLine("finished 1");
+                */
+
+                /*
+                await engine.AddAutomation(new TakeOff()
                 {
-                    gearUpAltitude = 60,
-                    targetAltitude = 500,
+                    gearUpAltitudeFromGround = 200,
+                    targetAltitude = 300,
                     climbRate = 1200,
                     onlyAvailableOnGround = true
                 });
+                */
 
-                //engine.AddVariableRequest("AUTOPILOT HEADING LOCK DIR");
-
-
-                engine.LaunchActions();
+                await engine.LaunchActions();
 
 
                 /*
@@ -121,7 +137,7 @@ namespace FSSimConnectorLibConsole
 
         public static void sim_VariableHasBeenRecovered(object sender, RecoveredVariable e)
         {
-            //Console.WriteLine("Recovered variable is:\t {0} \t\t\t with value:{1}", e.Variable.name, e.Value);
+            Console.WriteLine("Recovered variable is:\t {0} \t\t\t with value:{1}", e.Variable.name, e.Value);
             varValue = e.Value;
         }
 

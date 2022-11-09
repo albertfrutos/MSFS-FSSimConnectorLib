@@ -56,7 +56,7 @@ namespace FSSimConnectorLib
             VariablesList = new Variable().LoadVariables(variablesConfig.variablesFile);
         }
 
-        internal void RequestVariable(string variableName)
+        internal async Task RequestVariable(string variableName)
         {
             pendingVariablesQueue.Enqueue(variableName);
         }
@@ -177,7 +177,6 @@ namespace FSSimConnectorLib
                 connector.OnVariableRecovery(recoveredVariable);
 
                 isProcessing = false;
-                Console.WriteLine("    finished {0}", variable.name);
             }
             catch (Exception ex)
             {
@@ -209,6 +208,11 @@ namespace FSSimConnectorLib
             }
 
             return fi;
+        }
+
+        internal bool AreTherePendingVariables()
+        {
+            return processingVariablesQueue.Count > 0 || pendingVariablesQueue.Count > 0;
         }
 
 
